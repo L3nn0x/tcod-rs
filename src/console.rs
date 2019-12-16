@@ -128,6 +128,10 @@ impl Offscreen {
 
 }
 
+// ! libtcod is not thread-safe, this may have some side effects but none have been seen yet
+// ! This is primary so that Offscreen consoles can be used as specs resources
+unsafe impl Send for Offscreen {}
+
 /// The console representing the main window of the application
 ///
 /// This is the only console type capable of handling user input and flushing its contents onto the screen.
@@ -457,9 +461,9 @@ impl Root {
 pub struct RootInitializer<'a> {
     width: i32,
     height: i32,
-    title: Box<AsRef<str> + 'a>,
+    title: Box<dyn AsRef<str> + 'a>,
     is_fullscreen: bool,
-    font_path: Box<AsRef<Path> + 'a>,
+    font_path: Box<dyn AsRef<Path> + 'a>,
     font_layout: FontLayout,
     font_type: FontType,
     font_dimensions: (i32, i32),
@@ -696,6 +700,14 @@ pub trait Console : AsNative<ffi::TCOD_console_t> {
         unsafe {
             FromNative::from_native(
                 ffi::TCOD_console_get_default_background(*self.as_native()))
+        }
+    }
+
+    /// Return the console's default foreground color.
+    fn get_default_foreground(&mut self) -> Color {
+        unsafe {
+            FromNative::from_native(
+                ffi::TCOD_console_get_default_foreground(*self.as_native()))
         }
     }
 
@@ -1090,11 +1102,19 @@ impl AsNative<ffi::TCOD_console_t> for Root {
     unsafe fn as_native(&self) -> &ffi::TCOD_console_t {
         &ROOT_ID.id
     }
+    
+    unsafe fn as_native_mut(&mut self) -> &mut ffi::TCOD_console_t {
+        unimplemented!();
+    }
 }
 
 impl AsNative<ffi::TCOD_console_t> for Offscreen {
     unsafe fn as_native(&self) -> &ffi::TCOD_console_t {
         &self.con
+    }
+    
+    unsafe fn as_native_mut(&mut self) -> &mut ffi::TCOD_console_t {
+        &mut self.con
     }
 }
 

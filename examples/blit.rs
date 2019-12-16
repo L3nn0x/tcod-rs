@@ -1,8 +1,7 @@
 extern crate tcod;
 
 use tcod::console;
-use tcod::{Console, RootConsole, OffscreenConsole};
-use tcod::colors;
+use tcod::{Console, RootConsole, OffscreenConsole, Color};
 
 
 fn main() {
@@ -13,16 +12,16 @@ fn main() {
 
     let mut direct: OffscreenConsole = OffscreenConsole::new(20, 20);
     let mut boxed_direct: Box<OffscreenConsole> = Box::new(OffscreenConsole::new(20, 20));
-    let mut trait_object: &Console = &OffscreenConsole::new(20, 20);
-    let mut boxed_trait: Box<Console> = Box::new(OffscreenConsole::new(20, 20));
+    let mut trait_object: &dyn Console = &OffscreenConsole::new(20, 20);
+    let mut boxed_trait: Box<dyn Console> = Box::new(OffscreenConsole::new(20, 20));
 
 
-    root.set_default_background(colors::DARKEST_GREEN);
+    root.set_default_background(Color::DARKEST_GREEN);
 
-    direct.set_default_background(colors::RED);
-    boxed_direct.set_default_background(colors::WHITE);
-    trait_object.set_default_background(colors::BLACK);
-    boxed_trait.set_default_background(colors::BLUE);
+    direct.set_default_background(Color::RED);
+    boxed_direct.set_default_background(Color::WHITE);
+    trait_object.set_default_background(Color::BLACK);
+    boxed_trait.set_default_background(Color::BLUE);
 
     root.clear();
 

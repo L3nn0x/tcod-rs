@@ -1,7 +1,7 @@
 libtcod bindings for Rust [![Build Status](https://travis-ci.org/tomassedovic/tcod-rs.svg?branch=master)](https://travis-ci.org/tomassedovic/tcod-rs)
 -------------------------
 
-[libtcod a.k.a. "The Doryen Library"](http://roguecentral.org/doryen/libtcod/)
+[libtcod a.k.a. "The Doryen Library"](https://bitbucket.org/libtcod/libtcod)
 is a smallish library designed for writing roguelikes. It provides a bunch of
 useful functionality such as:
 
@@ -11,11 +11,11 @@ useful functionality such as:
 * Path finding
 * Field of view
 * Portable (works on linux, windows and mac)
-* [Lots of other stuff](http://roguecentral.org/doryen/libtcod/features/)
+* [Lots of other stuff](https://bitbucket.org/libtcod/libtcod/wiki/Features)
 
 
 This project provides [Rust](http://www.rust-lang.org/) bindings for libtcod
-v1.5.2.
+v1.6.3.
 
 This project follows [Semantic Versioning](http://semver.org/). Since we're
 under `1.0.0` anything goes. The API can change at any time.
@@ -34,7 +34,7 @@ http://tomassedovic.github.io/tcod-rs/tcod/index.html
 But that's mostly useful for types, function signatures, etc. We don't have much
 in term of actual docs, but you can always check the official ones:
 
-http://roguecentral.org/doryen/data/libtcod/doc/1.5.1/index2.html?c=true
+https://libtcod.readthedocs.io/en/stable/
 
 
 Current status
@@ -84,7 +84,7 @@ To use `tcod-rs`, add this to your game's `Cargo.toml`:
 
 ```toml
 [dependencies]
-tcod = "0.12"
+tcod = "0.15"
 ```
 
 ### Building on Linux
@@ -92,7 +92,7 @@ tcod = "0.12"
 Run the equivalent of:
 
 ```sh
-$ sudo apt-get install gcc g++ make libsdl1.2-dev
+$ sudo apt-get install gcc g++ make libsdl2-dev
 $ cd yourgame
 $ cargo build --release
 $ cargo run --release
@@ -100,8 +100,17 @@ $ cargo run --release
 
 on your distro.
 
-You can also check the [official libtcod build instructions for Linux](http://roguecentral.org/doryen/data/libtcod/doc/1.5.2/html2/compile_libtcod_linux.html?c=true).
+#### Building a dynamic library
 
+By default, `tcod-rs` will build the library statically on Linux as including
+the code into the executable is usually more convenient. To build a dynamic
+library specify the `dynlib` feature for `tcod-sys` in `Cargo.toml`
+
+```
+[dependencies.tcod-sys]
+version = "*"
+features = ["dynlib"]
+```
 
 ### Building on Windows (with MSVC)
 
@@ -134,8 +143,6 @@ cargo build --release
 cargo run --release
 ```
 
-You can also check the [official libtcod build instructions for Windows](http://roguecentral.org/doryen/data/libtcod/doc/1.5.2/html2/compile_libtcod_mingw.html?c=true).
-
 
 ### Building on Mac OS X
 
@@ -143,7 +150,7 @@ You can also check the [official libtcod build instructions for Windows](http://
 2. Run:
 
 ```sh
-$ brew install pkg-config sdl
+$ brew install pkg-config sdl2
 $ cd yourgame
 $ cargo build --release
 $ cargo run --release
@@ -178,7 +185,7 @@ Contributing
 ------------
 
 The raw bindings were generated using
-[rust-bindgen](https://github.com/crabtw/rust-bindgen) and are located at
+[rust-bindgen](https://github.com/rust-lang/rust-bindgen) and are located at
 `src/ffi.rs`. The safe (hopefully?) wrapper was built on top of them at
 `src/lib.rs`.
 

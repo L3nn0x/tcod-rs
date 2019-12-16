@@ -7,6 +7,7 @@ use random::Rng;
 use std::ops::{Deref, DerefMut};
 use std::fmt;
 use std::mem;
+use std::ptr;
 
 #[derive(Copy, Clone, Debug)]
 pub enum TraverseOrder {
@@ -98,16 +99,20 @@ impl<'a> Bsp<'a> {
     }
 
     pub fn split_recursive(&mut self,
-                           randomizer: Option<Rng>,
+                           mut randomizer: Option<&mut Rng>,
                            nb: i32,
                            min_h_size: i32,
                            min_v_size: i32,
                            max_h_ratio: f32,
                            max_v_ratio: f32) {
-        let rnd = randomizer.unwrap_or(Rng::get_instance());
+        let rnd = unsafe { if let Some(ref mut r) = randomizer {
+            *r.as_native_mut()
+        } else {
+            ptr::null()
+        } };
         unsafe {
             ffi::TCOD_bsp_split_recursive(self.bsp as *mut ffi::TCOD_bsp_t,
-                                          *rnd.as_native(),
+                                          rnd as *mut _,
                                           nb,
                                           min_h_size,
                                           min_v_size,
@@ -215,7 +220,7 @@ impl<'a> Bsp<'a> {
     pub fn traverse<F>(&self, order: TraverseOrder, mut callback: F) -> bool
         where F: FnMut(&mut Bsp) -> bool
     {
-        let cb: &mut FnMut(&mut Bsp) -> bool = &mut callback;
+        let cb: &mut dyn FnMut(&mut Bsp) -> bool = &mut callback;
         let retval = unsafe {
             let bsp = mem::transmute(self.bsp as *const ffi::TCOD_bsp_t);
             match order {
